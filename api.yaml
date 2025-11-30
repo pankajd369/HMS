@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  title: Hospital Management System API
+  description: Internal API for HMS application
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      summary: User Login
+      description: Authenticates Admin, Doctor, or Patient.
+  /register:
+    post:
+      summary: Patient Registration
+      description: Registers a new patient.
+  /admin/doctors:
+    get:
+      summary: List Doctors
+      description: Returns a list of all doctors.
+    post:
+      summary: Add Doctor
+      description: Admin adds a new doctor.
+  /admin/doctor/edit/{id}:
+    post:
+      summary: Edit Doctor
+      description: Updates doctor details or availability.
+  /doctor/dashboard:
+    get:
+      summary: Doctor Dashboard
+      description: View today's appointments.
+  /doctor/appointments:
+    get:
+      summary: All Appointments
+      description: View all past and upcoming appointments.
+  /doctor/availability:
+    post:
+      summary: Manage Availability
+      description: Update 7-day availability schedule.
+  /patient/book:
+    post:
+      summary: Book Appointment
+      description: Patient books a slot with a doctor.
+  /get_availability/{doctor_id}:
+    get:
+      summary: Get Doctor Availability
+      description: Returns JSON of doctor's available slots.

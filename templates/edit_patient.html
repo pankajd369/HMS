@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="card-title mb-0">Edit Patient - {{ patient.name }}</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ patient.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Info</label>
+                        <input type="text" name="contact" class="form-control" value="{{ patient.contact_info }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Medical History</label>
+                        <textarea name="medical_history" class="form-control"
+                            rows="4">{{ patient.medical_history }}</textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Update Patient</button>
+                        <a href="{{ url_for('manage_patients') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

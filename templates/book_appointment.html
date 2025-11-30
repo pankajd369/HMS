@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Book Appointment</h3>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="specialization" class="form-control"
+                            placeholder="Filter by specialization">
+                        <button type="submit" class="btn btn-outline-secondary">Filter</button>
+                    </div>
+                </form>
+
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Select Doctor</label>
+                        <div class="input-group">
+                            <select name="doctor_id" id="doctorSelect" class="form-select" required>
+                                <option value="" selected disabled>Choose a doctor...</option>
+                                {% for d in doctors %}
+                                <option value="{{ d.id }}">{{ d.name }} ({{ d.specialization }})</option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" class="btn btn-outline-info" id="checkAvailBtn">Check
+                                Availability</button>
+                        </div>
+                        <div id="availDisplay" class="form-text mt-2"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Treatment / Reason</label>
+                        <input type="text" name="treatment_type" class="form-control"
+                            placeholder="e.g. Checkup, Fever, etc." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="date" class="form-control" required min="{{ now_date }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Time</label>
+                        <input type="time" name="time" class="form-control" required>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Book Appointment</button>
+                        <a href="{{ url_for('patient_dashboard') }}" class="btn btn-link text-center mt-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('checkAvailBtn').addEventListener('click', function () {
+        const doctorId = document.getElementById('doctorSelect').value;
+        const display = document.getElementById('availDisplay');
+
+        if (!doctorId) {
+            display.innerHTML = '<span class="text-danger">Please select a doctor first.</span>';
+            return;
+        }
+
+        display.innerHTML = '<span class="text-muted">Checking...</span>';
+
+        fetch('/get_availability/' + doctorId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.availability && data.availability.length > 0) {
+                    let html = '<ul class="list-unstyled mb-0">';
+                    data.availability.forEach(slot => {
+                        html += `<li><small class="text-success"><strong>${slot.date}</strong>: ${slot.start_time} - ${slot.end_time}</small></li>`;
+                    });
+                    html += '</ul>';
+                    display.innerHTML = html;
+                } else {
+                    display.innerHTML = '<span class="text-warning">No specific availability set. Doctor might be available 9-5.</span>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                display.innerHTML = '<span class="text-danger">Error fetching availability.</span>';
+            });
+    });
+</script>
+{% endblock %}

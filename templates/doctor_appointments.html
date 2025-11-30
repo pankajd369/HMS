@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2>My Appointments</h2>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Treatment / Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in appointments %}
+                    <tr>
+                        <td>{{ a.id }}</td>
+                        <td>{{ a.date }}</td>
+                        <td>{{ a.time }}</td>
+                        <td>
+                            {{ a.patient_name }}
+                            <a href="{{ url_for('view_patient_history', patient_id=a.patient_id) }}"
+                                class="btn btn-sm btn-outline-info ms-2">History</a>
+                        </td>
+                        <td>{{ a.treatment_type }}</td>
+                        <td>
+                            <span
+                                class="badge bg-{{ 'success' if a.status == 'Completed' else 'warning' if a.status == 'Scheduled' else 'danger' }}">
+                                {{ a.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if a.status == 'Scheduled' %}
+                            <form action="{{ url_for('update_appointment_status', appointment_id=a.id) }}" method="post"
+                                class="d-inline">
+                                <input type="hidden" name="status" value="Completed">
+                                <button type="submit" class="btn btn-sm btn-success">Complete</button>
+                            </form>
+                            <a href="{{ url_for('add_treatment', appointment_id=a.id) }}"
+                                class="btn btn-sm btn-primary">Add Treatment</a>
+                            {% elif a.status == 'Completed' %}
+                            <a href="{{ url_for('add_treatment', appointment_id=a.id) }}"
+                                class="btn btn-sm btn-info text-white">View/Edit Treatment</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
